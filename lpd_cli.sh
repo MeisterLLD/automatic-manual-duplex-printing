@@ -40,7 +40,7 @@ filename_base="${filename%.*}"
 # Create the new filename with the "_rotated.pdf" suffix
 new_filename="${filename_base}_rotated.pdf"
 # Rotate the PDF using pdftk
-pdftk "$filename" cat 1-end output "$new_filename" rotate 180
+pdftk "$filename" cat 1-enddown output "$new_filename"
 num_pages=$(pdfinfo $1 | grep Pages | awk '{print $2}')  # number of pages in document
 [ -z "$2" ] && start=1 || start=$2                       # start of page range (default: 1)
 [ -z "$3" ] && end=$num_pages || end=$3                  # end   of page range (default: num_pages)
