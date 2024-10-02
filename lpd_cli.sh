@@ -35,6 +35,12 @@ fi
 
 # initial variables
 filename=$1                                              # file name
+# Get the filename without the extension
+filename_base="${filename%.*}"
+# Create the new filename with the "_rotated.pdf" suffix
+new_filename="${filename_base}_rotated.pdf"
+# Rotate the PDF using pdftk
+pdftk "$filename" cat 1-end output "$new_filename" rotate 180
 num_pages=$(pdfinfo $1 | grep Pages | awk '{print $2}')  # number of pages in document
 [ -z "$2" ] && start=1 || start=$2                       # start of page range (default: 1)
 [ -z "$3" ] && end=$num_pages || end=$3                  # end   of page range (default: num_pages)
@@ -150,7 +156,7 @@ then
 
         # print back pages
         reverse=false
-        back_job=$(send_print_job $filename $back $multi $reverse $color)
+        back_job=$(send_print_job $new_filename $back $multi $reverse $color)
         monitor_print_job $back_job
 
         # print last empty back page
@@ -178,9 +184,10 @@ then
 
     # print front pages
     reverse=false
-    front_job=$(send_print_job $filename $front $multi $reverse $color)
+    front_job=$(send_print_job $new_filename $front $multi $reverse $color)
     monitor_print_job $front_job
 fi
 
 # notify user of completion
 echo "Done"
+rm $new_filename
